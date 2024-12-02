@@ -2,11 +2,13 @@
   "persona": [
     {
       "nombre": "pablo",
-      "apellido": "quiros"
+      "apellido": "quiros",
+      "id": "2382"
     },
     {
       "nombre": "Lucas",
-      "apellido": "Lopez"
+      "apellido": "Lopez",
+      "id": "1377"
     },
     {
       "id": "efab",
@@ -92,11 +94,83 @@
       "id": "c75d",
       "apellido": "1234",
       "nombre": "hola"
+    },
+    {
+      "id": "def5",
+      "apellido": "",
+      "nombre": ""
+    },
+    {
+      "id": "cbde",
+      "apellido": "",
+      "nombre": "hxfkhxh"
+    },
+    {
+      "id": "905b",
+      "nombre": "ejemplo1",
+      "apellido": "ejemplo1"
     }
   ],
   "animal": [
     {
-      "especie": "gato"
+      "especie": "gato",
+      "id": "96cd"
+    }
+  ],
+  "listaTareas": [
+    {
+      "nombre": "Ir al gim",
+      "fechaLimite": "7 de diciembre",
+      "finalizada": true,
+      "id": "81f8"
+    },
+    {
+      "id": "4250",
+      "nombre": "cgj,lcgjcgjcghk",
+      "fecha": "2024-12-24",
+      "finalizada": false
+    },
+    {
+      "id": "6efd",
+      "nombre": "Limpiar la casa",
+      "fecha": "2024-12-03",
+      "prioridad": "media",
+      "finalizada": false
+    },
+    {
+      "id": "6c8e",
+      "nombre": "",
+      "fecha": "",
+      "prioridad": "",
+      "finalizada": false
+    },
+    {
+      "id": "e4ea",
+      "nombre": "",
+      "fecha": "",
+      "prioridad": "",
+      "finalizada": false
+    },
+    {
+      "id": "ef99",
+      "nombre": "",
+      "fecha": "",
+      "prioridad": "",
+      "finalizada": false
+    },
+    {
+      "id": "8560",
+      "nombre": "",
+      "fecha": "",
+      "prioridad": "",
+      "finalizada": false
+    },
+    {
+      "id": "4b81",
+      "nombre": "",
+      "fecha": "",
+      "prioridad": "",
+      "finalizada": false
     }
   ]
 }
