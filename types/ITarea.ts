@@ -1,4 +1,5 @@
 export interface ITarea {
+    id?: number
     nombre: string;
     fecha: string;
     prioridad: string;

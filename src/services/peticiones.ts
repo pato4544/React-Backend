@@ -1,3 +1,7 @@
+
+// METODO POST
+
+
 export const POST = async <T>(url: string, values: T): Promise<T> => {
     try {
 
