@@ -1,17 +1,15 @@
 import { ChangeEvent, Dispatch, FC, SetStateAction, useState } from "react";
-import { POST } from "../../services/peticiones";
+import { PATCH, POST } from "../../services/peticiones";
 import { ITarea } from "../../../types/ITarea"
 
 interface IFormProps {
     setForm: Dispatch<SetStateAction<boolean>>
+    datos: {tipo: string, id: number | undefined}   // Creamos tipo para definir si va a ser POST o PATCH y el id (que puede valer como numero o undefined para no tener problemas) para poder utilizarlo en el PATCH
 }
 
 
 
-const TareasForm: FC<IFormProps> = ({ setForm }) => {
-
-
-
+const TareasForm: FC<IFormProps> = ({ setForm, datos }) => {
 
     const [values, setValues] = useState<ITarea>({nombre: "", fecha: "", prioridad: "", finalizada: false })
 
@@ -28,9 +26,16 @@ const TareasForm: FC<IFormProps> = ({ setForm }) => {
 
     console.log(values)
 
-    const handleSubmit = async () => {
-        const res = await POST<ITarea>(`${import.meta.env.VITE_URL}/listaTareas`, values);
-        console.log(res)
+    const handleSubmit = async () => {  // Aca hacemos la comparacion mediante el tipo de dato recibido, si el string es "POST" aplicamos el metodo POST para poder crear los datos, si el string es "PATCH" aplicamos el metodo PATCH para poder modificar los datos del elemento tarea
+
+        if (datos.tipo === "POST") {
+            await POST<ITarea>(`${import.meta.env.VITE_URL}/listaTareas`, values);
+        }
+        else {
+            await PATCH<ITarea>(`${import.meta.env.VITE_URL}/listaTareas/editar/${datos.id}`, values);  // Al ser un patch, la ruta es diferente y ademas agregamos el datos.id, ya que lo vamos a necesitar para editar un elemento en especifico
+        }
+       
+       
     }
 
     return (
@@ -38,17 +43,17 @@ const TareasForm: FC<IFormProps> = ({ setForm }) => {
             <div className="flex gap-y-11 pb-6 pt-6 flex-col w-[30%] rounded-[20px] bg-gradient-to-r from-purple-600 to-indigo-600        ">
             <div className="flex justify-center gap-10 items-center">
                 <h1 className="text-gray-100 font-bold font-roboto" >Tarea:</h1>
-                    <input placeholder="Ingresa la tarea" className="bg-white text-gray-900 border rounded-[10px] p-2 " type="text" onChange={handleChange} name='nombre' />
+                    <input placeholder="Ingresa la tarea" className="bg-white text-gray-900 border rounded-[10px] p-2 " value={values.nombre} type="text" onChange={handleChange} name='nombre' />
                 </div>
                 <div className="flex justify-center gap-10 items-center">
                     <h1 className="text-gray-100 font-bold font-roboto">Fecha limite:</h1>
-                    <input className="bg-white text-gray-900 border rounded-[10px] p-2 " type="date" onChange={handleChange} name='fecha' />
+                    <input className="bg-white text-gray-900 border rounded-[10px] p-2 " type="date" value={values.fecha} onChange={handleChange} name='fecha' />
                 </div>
 
                 <div className="flex justify-center gap-10 items-center">
                     <h1 className="text-gray-100 font-bold font-roboto">Prioridad:</h1>
 
-                    <select className=" p-2 bg-white text-gray-900 border rounded-[10px]" name="prioridad" onChange={handleChange} id="">
+                    <select className=" p-2 bg-white text-gray-900 border rounded-[10px]" name="prioridad" value={values.prioridad} onChange={handleChange} id=""> {/* Estos values al cargarle los datos al state hace que se autocompleten al intentar editar la tarea */}
                     <option></option>
                         <option value="alta">Alta </option>
                       <option value="media">Media</option>

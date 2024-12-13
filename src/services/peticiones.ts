@@ -39,8 +39,10 @@ export const PATCH = async <T>(url: string, values: Partial<T>): Promise<T> => {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(values),
+            body: JSON.stringify(values),  //Error solucionado del stringify
+            
         });
+        
 
         if (!res.ok) {
             throw new Error('Network response was not ok');

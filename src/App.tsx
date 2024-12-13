@@ -13,6 +13,9 @@ function App() {
 
   const [tareas, setTareas] = useState<ITarea[]>([])  // El hook con el que vamos a acceder a los datos de tareas para traerlos, modificarlos (aun no lo hago) o borrarlos
 
+  const [datos, setDatos] = useState<{ tipo: string, id: number | undefined }>({ id: 0, tipo: '' })  // Creamos un hook con un tipo string y un id number, que van  a tener como valor inicial ""(vacio) y 0 (el id)
+
+
   const traerTareas = async () => { /* Funcion asincrona que espera a recibir datos con el await de abajo */
     const res = await fetch(`${import.meta.env.VITE_URL}/listaTareas`); // La constante res va a pulear los datos del link de la base de datos (con await espera a que se reciban los datos)
     const resJSON = await res.json(); /* El res.json() transforma a la const res en formato JSON */
@@ -29,10 +32,10 @@ function App() {
   const completarTarea = async (id: number) => {
     try {
       const nuevoEstado = !tareas.find((tarea) => tarea.id === id)?.finalizada; // Esto de aca va a permitirnos volver al valor falso de finalizada, ya que si solo le pedimos que la haga true se queda true para siempre
-  
+
       await PATCH(`${import.meta.env.VITE_URL}/listaTareas/${id}`, { finalizada: nuevoEstado }); // Hacemos el patch con el nuevo estado
-  
-  
+
+
       setTareas((prevTareas) =>
         prevTareas.map((tarea) =>
           tarea.id === id ? { ...tarea, finalizada: nuevoEstado } : tarea
@@ -42,7 +45,17 @@ function App() {
       console.error("No se pudo cambiar el estado de la tarea.", error); // Si ocurre un error por alguna casualidad de la vida va a tirar este mensajito
     }
   };
-  
+
+
+  const handleOpen = (tipo: string, id: number | undefined) => {  // Con este hook vamos a setear el tipo y el id del hook datos con un onClick en los botones de abajo (el de la suma para asignarle el POST y el de la E para asignarle el PATCH)
+    setDatos(
+      {
+        tipo: tipo,
+        id: id
+      }
+    )
+    setForm(true)  // Esto cumple la misma funcion que antes
+  }
 
   const eliminarTarea = async (id: number) => {
     try {
@@ -53,8 +66,8 @@ function App() {
     }
   };
 
-  
-  const calcularColor = (tarea:ITarea) => {
+
+  const calcularColor = (tarea: ITarea) => {
     if (tarea.prioridad === "alta") {
       return "text-red-500"
     } else if (tarea.prioridad === "media") {
@@ -63,7 +76,7 @@ function App() {
       return "text-green-500"
     }
   }
-  
+
   return (
     <>
       <div className='min-h-screen w-[60%] mx-auto flex flex-col '>
@@ -77,11 +90,11 @@ function App() {
 
           {tareas.map((tarea, index) => (  // Lo que hago con el onCLick abajo es que si hacemos click a un elemento Tarea su estado finalizada se vuelve true, y con eso les puedo meter nuevos estilos a cada elemento en casa de que la tarea este finalizada (use las comillas invertidas justamente para poder meter esa condicion junto a las clases normales en classname)
 
-            <div key={index}  onClick={() => completarTarea(tarea.id ?? 0)} className={`font-poppins pl-3 flex gap-4 w-full h-16 items-center border-[1px] justify-between hover:bg-gray-200 border-b-blue-800  border-t-blue-950 ${tarea.finalizada ? 'bg-gray-500/40 hover:bg-gray-500/40 transition duration-300' : ''}`}
+            <div key={index} onClick={() => completarTarea(tarea.id ?? 0)} className={`font-poppins pl-3 flex gap-4 w-full h-16 items-center border-[1px] justify-between hover:bg-gray-200 border-b-blue-800  border-t-blue-950 ${tarea.finalizada ? 'bg-gray-500/40 hover:bg-gray-500/40 transition duration-300' : ''}`}
             >
-             
+
               <div className={`flex gap-x-8 items-center  h-full w-[45%] ${tarea.finalizada ? 'line-through  text-white transition duration-100' : ''}`}>
-                <button className={`text-transparent${tarea.finalizada ? 'text-white transition duration-100' : ''}`}><FaCheck/></button> 
+                <button className={`text-transparent${tarea.finalizada ? 'text-white transition duration-100' : ''}`}><FaCheck /></button>
                 <p>{tarea.nombre}</p>
               </div>
               <div className={`flex  justify-center items-center h-full w-[20%] ${tarea.finalizada ? 'line-through  text-white transition duration-100' : ''}`}>
@@ -98,9 +111,21 @@ function App() {
                 </p>
               </div>
 
+
+
+
               <div className='flex justify-end h-full w-[10%]'>
-                <button  onClick={() => eliminarTarea(tarea.id ?? 0)} className={`hover:bg-red-600 text-[17px] font-bold hover:text-white h-full w-[70%]${tarea.finalizada ? ' text-white transition duration-100' : ''}`}>x</button>
+                <button onClick={() => eliminarTarea(tarea.id ?? 0)} className={`hover:bg-red-600 text-[17px] font-bold hover:text-white h-full w-[70%]${tarea.finalizada ? ' text-white transition duration-100' : ''}`}>x</button>
               </div>
+
+
+              <div className='flex justify-end h-full w-[10%]'>
+                <button onClick={() => handleOpen('PATCH', tarea.id)} className={`hover:bg-red-600 text-[17px] font-bold hover:text-white h-full w-[70%]${tarea.finalizada ? ' text-white transition duration-100' : ''}`}>E</button> {/* Al hacerle click al boton editar seteamos con el string PATCH y el id de la tarea/elemento a editar*/}  
+              </div>
+
+
+
+
             </div>
 
           ))}
@@ -109,12 +134,12 @@ function App() {
 
 
         <div className='text-white font-roboto font-semibold flex items-center justify-center h-[60px] text-[36px] rounded-b-[20px] bg-gradient-to-r from-blue-300 to-blue-700'>
-          <button className='bg-green-500 hover:bg-green-600 text-white rounded-full p-2 w-[45px] text-[20px]' onClick={() => setForm(true)}>+</button>
+          <button className='bg-green-500 hover:bg-green-600 text-white rounded-full p-2 w-[45px] text-[20px]' onClick={() => handleOpen('POST', 0)}>+</button> {/* Al hacerle click al boton suma, seteamos con el string POST y le pasamos un id para que lo tenga pero no sirve de nada*/}
         </div>
 
 
       </div>
-      {form && <TareasForm setForm={setForm} />}  {/* Un renderizado condicional. si el valor de form es true con el operador AND renderizamos la componente TareasForm */}
+      {form && <TareasForm setForm={setForm} datos={datos} />}  {/* Un renderizado condicional. si el valor de form es true con el operador AND renderizamos la componente TareasForm. Ademas, ahora al pasarle datos, sabe que si tiene el tipo PATCH va a editar los datos (lo que esta asignado a E) y si tiene el tipo POST va a crear los datos (lo que tiene asignado a +)*/}
 
 
     </>
